@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cognitive Flexibility Mobile</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin: 0 0 5px 0;
+            font-size: 1.4em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.8em;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .difficulty-btn {
+            padding: 6px 12px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.75em;
+        }
+        
+        .difficulty-btn.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .rules {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: left;
+            border: 2px solid #dee2e6;
+        }
+        
+        .rule-item {
+            padding: 3px 0;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.7em;
+        }
+        
+        .current-rule {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(238, 90, 36, 0.4);
+        }
+        
+        .cards-counter {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 8px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            font-weight: bold;
+        }
+        
+        .timer-combo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .timer, .combo, .errors {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 8px 5px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        
+        .combo {
+            background: linear-gradient(45deg, #fdcb6e, #e17055);
+        }
+        
+        .errors {
+            background: linear-gradient(45deg, #e17055, #d63031);
+        }
+        
+        .timer-value, .combo-value, .error-value {
+            font-size: 1.2em;
+            display: block;
+            margin-top: 3px;
+        }
+        
+        .shape-container {
+            width: 120px;
+            height: 120px;
+            margin: 15px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            border-radius: 15px;
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .shape {
+            transition: all 0.3s ease;
+        }
+        
+        .circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+        
+        .square {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+        }
+        
+        .black { 
+            background-color: #2c3e50;
+            box-shadow: 0 3px 10px rgba(44, 62, 80, 0.5);
+        }
+        
+        .white { 
+            background-color: #ecf0f1; 
+            border: 3px solid #34495e;
+            box-shadow: 0 3px 10px rgba(52, 73, 94, 0.3);
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(9, 132, 227, 0.3);
+            touch-action: manipulation;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .key-hint {
+            font-size: 0.65em;
+            opacity: 0.8;
+            display: block;
+            margin-top: 3px;
+        }
+        
+        .feedback {
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin: 10px 0;
+            padding: 5px;
+        }
+        
+        .correct {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .incorrect {
+            background: linear-gradient(45deg, #e17055, #d63031);
+            color: white;
+        }
+        
+        .stats {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.8em;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .control-btn {
+            background: linear-gradient(45deg, #636e72, #2d3436);
+            padding: 8px;
+            font-size: 1.2em;
+        }
+        
+        .start-button {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .best-score {
+            background: linear-gradient(45deg, #ffeaa7, #fdcb6e);
+            color: #2d3436;
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.75em;
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+            border: 2px solid #90caf9;
+        }
+        
+        .instructions h3 {
+            color: #1976d2;
+            margin-top: 0;
+            font-size: 1em;
+        }
+        
+        .instructions ul {
+            padding-left: 15px;
+            line-height: 1.5;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+            font-size: 0.8em;
+        }
+        
+        .instructions strong {
+            color: #1565c0;
+        }
+        
+        @media (max-width: 400px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.2em;
+            }
+        }
+        
+        body {
+            overflow-x: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .container {
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        
+        /* Styles for orthopedagogical analysis */
+        .analysis-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .analysis-section h3 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-size: 1em;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .stat-label {
+            font-size: 0.7em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .cognitive-box, .speed-box, .recommendations-box, .progression-box {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .cognitive-box p, .speed-box p, .recommendations-box p, .progression-box p {
+            margin: 8px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        
+        .cognitive-box strong, .speed-box strong {
+            color: #667eea;
+        }
+        
+        .indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin: 2px;
+        }
+        
+        .indicator-excellent {
+            background: #00b894;
+            color: white;
+        }
+        
+        .indicator-good {
+            background: #00cec9;
+            color: white;
+        }
+        
+        .indicator-moderate {
+            background: #fdcb6e;
+            color: white;
+        }
+        
+        .indicator-concern {
+            background: #e17055;
+            color: white;
+        }
+        
+        .recommendation-item {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 0.8em;
+        }
+        
+        .recommendation-item strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        
+        .progression-step {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 5px 0;
+            font-size: 0.75em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="startScreen">
+        <div class="container">
+            <h1>🧠 Cognitive Flexibility</h1>
+            <div class="subtitle">Inhibition & Mental Flexibility Test</div>
+            
+            <div class="instructions">
+                <h3>📋 Instructions</h3>
+                <ul>
+                    <li><strong>Goal:</strong> Answer according to the displayed rule</li>
+                    <li><strong>R1 - Shape:</strong> Click the shape you see</li>
+                    <li><strong>R2 - Color:</strong> Click the color you see</li>
+                    <li><strong>R3 - Opposite Shape:</strong> Click the opposite shape</li>
+                    <li><strong>R4 - Opposite Color:</strong> Click the opposite color</li>
+                    <li>⏱️ 20 cards per test</li>
+                    <li>🎯 Be fast and accurate!</li>
+                </ul>
+            </div>
+            
+            <div class="rules">
+                <div class="rule-item">R1 : Shape (circle/square)</div>
+                <div class="rule-item">R2 : Color (black/white)</div>
+                <div class="rule-item">R3 : Opposite Shape</div>
+                <div class="rule-item">R4 : Opposite Color</div>
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <strong style="color: #667eea;">Choose difficulty:</strong>
+            </div>
+            
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" id="btnStartEasy">EASY</button>
+                <button class="difficulty-btn" id="btnStartMedium">MEDIUM</button>
+                <button class="difficulty-btn" id="btnStartHard">HARD</button>
+            </div>
+            
+            <button class="start-button" id="startBtn">▶️ START TEST</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="hidden">
+        <div class="container">
+            <h1>🧠 Cognitive Flexibility</h1>
+            
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" id="gameEasy">EASY</button>
+                <button class="difficulty-btn" id="gameMedium">MEDIUM</button>
+                <button class="difficulty-btn" id="gameHard">HARD</button>
+            </div>
+            
+            <div class="rules">
+                <div class="rule-item">R1 : Shape | R2 : Color</div>
+                <div class="rule-item">R3 : Opposite Shape | R4 : Opposite Color</div>
+            </div>
+            
+            <div class="current-rule" id="currentRule">R1 : Shape</div>
+            
+            <div class="cards-counter">
+                📦 <span id="cardsRemaining">20</span> cards left
+            </div>
+            
+            <div class="timer-combo-container">
+                <div class="timer">
+                    ⏱️
+                    <span class="timer-value" id="reactionTime">0.0s</span>
+                </div>
+                <div class="combo">
+                    🔥
+                    <span class="combo-value" id="comboCount">0</span>
+                </div>
+                <div class="errors">
+                    ❌
+                    <span class="error-value" id="errorCount">0</span>
+                </div>
+            </div>
+            
+            <div class="shape-container">
+                <div class="shape circle black" id="shape"></div>
+            </div>
+            
+            <div class="buttons">
+                <button id="btnCircle">
+                    CIRCLE
+                    <span class="key-hint">R / 1</span>
+                </button>
+                <button id="btnSquare">
+                    SQUARE
+                    <span class="key-hint">C / 2</span>
+                </button>
+                <button id="btnBlack">
+                    BLACK
+                    <span class="key-hint">N / 3</span>
+                </button>
+                <button id="btnWhite">
+                    WHITE
+                    <span class="key-hint">B / 4</span>
+                </button>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="stats">
+                <div class="stat-row">
+                    <span class="stat-label">Score:</span>
+                    <span class="stat-value"><span id="correct">0</span>/<span id="total">0</span></span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Accuracy:</span>
+                    <span class="stat-value" id="accuracy">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Avg Time:</span>
+                    <span class="stat-value" id="avgTime">0.0s</span>
+                </div>
+            </div>
+            
+            <div class="best-score" id="bestScore">
+                🏆 Max: 0% | 🎯 Combo: 0
+            </div>
+            
+            <div class="control-buttons">
+                <button class="control-btn" id="btnReset">🔄</button>
+                <button class="control-btn" id="btnNext">⏭️</button>
+                <button class="control-btn" id="btnMenu">🏠</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orthopedagogical Analysis Screen -->
+    <div id="analysisScreen" class="hidden">
+        <div class="container">
+            <h1>📊 Orthopedagogical Analysis</h1>
+            <div class="subtitle">Detailed cognitive assessment</div>
+            
+            <div class="analysis-section">
+                <h3>🎯 Overall Performance</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Accuracy</div>
+                        <div class="stat-value" id="finalAccuracy">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Time</div>
+                        <div class="stat-value" id="finalAvgTime">0.0s</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Best Combo</div>
+                        <div class="stat-value" id="finalCombo">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-section">
+                <h3>🧠 Cognitive Analysis</h3>
+                <div id="cognitiveAnalysis" class="cognitive-box"></div>
+            </div>
+
+            <div class="analysis-section">
+                <h3>⏱️ Speed Profile</h3>
+                <div id="speedProfile" class="speed-box"></div>
+            </div>
+
+            <div class="analysis-section">
+                <h3>💡 Orthopedagogical Recommendations</h3>
+                <div id="recommendations" class="recommendations-box"></div>
+            </div>
+
+            <div class="analysis-section">
+                <h3>📈 Suggested Progression</h3>
+                <div id="progression" class="progression-box"></div>
+            </div>
+
+            <div class="control-buttons">
+                <button class="control-btn" id="btnNewTest">🔄 New test</button>
+                <button class="control-btn" id="btnBackMenu">🏠 Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRule = 1;
+        let currentShape = 'circle';
+        let currentColor = 'black';
+        let correctAnswers = 0;
+        let totalAnswers = 0;
+        let comboCount = 0;
+        let errorCount = 0;
+        let bestCombo = 0;
+        let difficulty = 'easy';
+        let startTime = Date.now();
+        let reactionTimes = [];
+        let bestAccuracy = 0;
+        let gameStarted = false;
+        const MAX_CARDS = 20;
+        let cardsRemaining = MAX_CARDS;
+        
+        const rules = {
+            1: { text: "R1 : Shape", type: "shape" },
+            2: { text: "R2 : Color", type: "color" },
+            3: { text: "R3 : Opposite Shape", type: "opposite-shape" },
+            4: { text: "R4 : Opposite Color", type: "opposite-color" }
+        };
+        
+        const difficultySettings = {
+            easy: { delay: 1500, rulesPool: [1, 2] },
+            medium: { delay: 1200, rulesPool: [1, 2, 3, 4] },
+            hard: { delay: 800, rulesPool: [1, 2, 3, 4] }
+        };
+        
+        function updateDifficultyButtons() {
+            document.querySelectorAll('#gameScreen .difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (difficulty === 'easy') {
+                document.getElementById('gameEasy').classList.add('active');
+            } else if (difficulty === 'medium') {
+                document.getElementById('gameMedium').classList.add('active');
+            } else if (difficulty === 'hard') {
+                document.getElementById('gameHard').classList.add('active');
+            }
+        }
+        
+        function backToMenu() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+            gameStarted = false;
+        }
+        
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            resetGame();
+            updateDifficultyButtons();
+            gameStarted = true;
+            startTime = Date.now();
+        }
+        
+        function selectDifficultyStart(level) {
+            difficulty = level;
+            document.querySelectorAll('#startScreen .difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (level === 'easy') {
+                document.getElementById('btnStartEasy').classList.add('active');
+            } else if (level === 'medium') {
+                document.getElementById('btnStartMedium').classList.add('active');
+            } else if (level === 'hard') {
+                document.getElementById('btnStartHard').classList.add('active');
+            }
+        }
+        
+        function setDifficulty(level) {
+            difficulty = level;
+            updateDifficultyButtons();
+            resetGame();
+        }
+        
+        function generateRandomShape() {
+            const shapes = ['circle', 'square'];
+            const colors = ['black', 'white'];
+            
+            currentShape = shapes[Math.floor(Math.random() * shapes.length)];
+            currentColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            const shapeElement = document.getElementById('shape');
+            shapeElement.className = `shape ${currentShape} ${currentColor}`;
+            
+            const rulesPool = difficultySettings[difficulty].rulesPool;
+            currentRule = rulesPool[Math.floor(Math.random() * rulesPool.length)];
+            document.getElementById('currentRule').textContent = rules[currentRule].text;
+            
+            startTime = Date.now();
+            
+            document.querySelector('.shape-container').style.opacity = '1';
+            document.querySelectorAll('button:not(.difficulty-btn):not(.control-btn)').forEach(btn => {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            });
+            
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.style.fontSize = '0.85em';
+            feedbackEl.style.minHeight = '45px';
+        }
+        
+        function updateReactionTime() {
+            if (!gameStarted) {
+                document.getElementById('reactionTime').textContent = '0.0s';
+                return;
+            }
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('reactionTime').textContent = elapsed + 's';
+        }
+        
+        setInterval(updateReactionTime, 100);
+        
+        function getCorrectAnswer() {
+            switch(rules[currentRule].type) {
+                case 'shape':
+                    return currentShape === 'circle' ? 'circle' : 'square';
+                case 'color':
+                    return currentColor === 'black' ? 'black' : 'white';
+                case 'opposite-shape':
+                    return currentShape === 'circle' ? 'square' : 'circle';
+                case 'opposite-color':
+                    return currentColor === 'black' ? 'white' : 'black';
+            }
+        }
+        
+        function answer(userAnswer) {
+            if (!gameStarted || cardsRemaining <= 0) return;
+            
+            const correctAnswer = getCorrectAnswer();
+            const feedbackEl = document.getElementById('feedback');
+            const reactionTime = (Date.now() - startTime) / 1000;
+            
+            totalAnswers++;
+            cardsRemaining--;
+            
+            if (userAnswer === correctAnswer) {
+                correctAnswers++;
+                comboCount++;
+                if (comboCount > bestCombo) {
+                    bestCombo = comboCount;
+                }
+                reactionTimes.push(reactionTime);
+                
+                feedbackEl.textContent = `✅ ${reactionTime.toFixed(1)}s`;
+                feedbackEl.className = 'feedback correct';
+            } else {
+                errorCount++;
+                feedbackEl.textContent = `❌ It was: ${correctAnswer}`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+            
+            updateStats();
+            
+            if (cardsRemaining <= 0) {
+                setTimeout(() => {
+                    endGame();
+                }, difficultySettings[difficulty].delay);
+            } else {
+                setTimeout(() => {
+                    nextShape();
+                }, difficultySettings[difficulty].delay);
+            }
+        }
+        
+        function nextShape() {
+            generateRandomShape();
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+        }
+        
+        function updateStats() {
+            document.getElementById('correct').textContent = correctAnswers;
+            document.getElementById('total').textContent = totalAnswers;
+            document.getElementById('accuracy').textContent = 
+                totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) + '%' : '0%';
+            document.getElementById('comboCount').textContent = comboCount;
+            document.getElementById('errorCount').textContent = errorCount;
+            document.getElementById('cardsRemaining').textContent = cardsRemaining;
+            
+            const avgTime = reactionTimes.length > 0 
+                ? (reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length).toFixed(1) 
+                : '0.0';
+            document.getElementById('avgTime').textContent = avgTime + 's';
+            
+            const accuracy = totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0;
+            if (accuracy > bestAccuracy) {
+                bestAccuracy = accuracy;
+            }
+            document.getElementById('bestScore').textContent = 
+                `🏆 Max: ${bestAccuracy}% | 🎯 Combo: ${bestCombo}`;
+        }
+        
+        function resetGame() {
+            correctAnswers = 0;
+            totalAnswers = 0;
+            comboCount = 0;
+            errorCount = 0;
+            cardsRemaining = MAX_CARDS;
+            reactionTimes = [];
+            updateStats();
+            nextShape();
+        }
+        
+        function endGame() {
+            gameStarted = false;
+            showOrthopedagogicalAnalysis();
+        }
+        
+        function showOrthopedagogicalAnalysis() {
+            // Hide game screen
+            document.getElementById('gameScreen').classList.add('hidden');
+            
+            // Show analysis screen
+            document.getElementById('analysisScreen').classList.remove('hidden');
+            
+            // Calculate statistics
+            const accuracy = totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0;
+            const avgTime = reactionTimes.length > 0 
+                ? (reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length).toFixed(2)
+                : 0;
+            
+            // Display global stats
+            document.getElementById('finalAccuracy').textContent = accuracy + '%';
+            document.getElementById('finalAvgTime').textContent = avgTime + 's';
+            document.getElementById('finalCombo').textContent = bestCombo;
+            
+            // Cognitive analysis
+            generateCognitiveAnalysis(accuracy, avgTime);
+            
+            // Speed profile
+            generateSpeedProfile(avgTime, reactionTimes);
+            
+            // Recommendations
+            generateRecommendations(accuracy, avgTime, errorCount, difficulty);
+            
+            // Suggested progression
+            generateProgression(accuracy, avgTime, difficulty);
+        }
+        
+        function generateCognitiveAnalysis(accuracy, avgTime) {
+            const analysisBox = document.getElementById('cognitiveAnalysis');
+            let html = '';
+            
+            // Cognitive inhibition analysis
+            let inhibitionLevel = '';
+            if (avgTime < 1.2) {
+                inhibitionLevel = '<span class="indicator indicator-excellent">Excellent</span>';
+                html += '<p><strong>Cognitive Inhibition:</strong> ' + inhibitionLevel + '<br>Remarkable ability to block automatic responses and process information in a controlled manner.</p>';
+            } else if (avgTime < 1.8) {
+                inhibitionLevel = '<span class="indicator indicator-good">Good</span>';
+                html += '<p><strong>Cognitive Inhibition:</strong> ' + inhibitionLevel + '<br>Good control of impulsive responses with effective processing capability.</p>';
+            } else if (avgTime < 2.5) {
+                inhibitionLevel = '<span class="indicator indicator-moderate">Moderate</span>';
+                html += '<p><strong>Cognitive Inhibition:</strong> ' + inhibitionLevel + '<br>Functional inhibition capacity that could be strengthened with targeted training.</p>';
+            } else {
+                inhibitionLevel = '<span class="indicator indicator-concern">To develop</span>';
+                html += '<p><strong>Cognitive Inhibition:</strong> ' + inhibitionLevel + '<br>Difficulty inhibiting automatic responses. Targeted and regular training is recommended.</p>';
+            }
+            
+            // Mental flexibility analysis
+            let flexibilityLevel = '';
+            if (accuracy >= 85) {
+                flexibilityLevel = '<span class="indicator indicator-excellent">Excellent</span>';
+                html += '<p><strong>Mental Flexibility:</strong> ' + flexibilityLevel + '<br>Excellent ability to adapt to rule and context changes.</p>';
+            } else if (accuracy >= 70) {
+                flexibilityLevel = '<span class="indicator indicator-good">Good</span>';
+                html += '<p><strong>Mental Flexibility:</strong> ' + flexibilityLevel + '<br>Good cognitive adaptation with occasional hesitations.</p>';
+            } else if (accuracy >= 55) {
+                flexibilityLevel = '<span class="indicator indicator-moderate">Moderate</span>';
+                html += '<p><strong>Mental Flexibility:</strong> ' + flexibilityLevel + '<br>Flexibility capacity present but requiring reinforcement through progressive exercises.</p>';
+            } else {
+                flexibilityLevel = '<span class="indicator indicator-concern">To develop</span>';
+                html += '<p><strong>Mental Flexibility:</strong> ' + flexibilityLevel + '<br>Apparent cognitive rigidity. Specific work on attentional alternation is advised.</p>';
+            }
+            
+            // Consistency analysis
+            if (reactionTimes.length > 0) {
+                const variance = calculateVariance(reactionTimes);
+                let consistencyLevel = '';
+                if (variance < 0.3) {
+                    consistencyLevel = '<span class="indicator indicator-excellent">Very stable</span>';
+                    html += '<p><strong>Performance Consistency:</strong> ' + consistencyLevel + '<br>Very homogeneous performances demonstrating excellent attentional regulation.</p>';
+                } else if (variance < 0.6) {
+                    consistencyLevel = '<span class="indicator indicator-good">Stable</span>';
+                    html += '<p><strong>Performance Consistency:</strong> ' + consistencyLevel + '<br>Good performances with some normal variations.</p>';
+                } else if (variance < 1.0) {
+                    consistencyLevel = '<span class="indicator indicator-moderate">Variable</span>';
+                    html += '<p><strong>Performance Consistency:</strong> ' + consistencyLevel + '<br>Notable attentional fluctuations. Work on sustained concentration is recommended.</p>';
+                } else {
+                    consistencyLevel = '<span class="indicator indicator-concern">Very variable</span>';
+                    html += '<p><strong>Performance Consistency:</strong> ' + consistencyLevel + '<br>Strong variations suggesting difficulties with sustained attention or cognitive fatigue.</p>';
+                }
+            }
+            
+            analysisBox.innerHTML = html;
+        }
+        
+        function generateSpeedProfile(avgTime, times) {
+            const speedBox = document.getElementById('speedProfile');
+            let html = '';
+            
+            if (times.length > 0) {
+                const minTime = Math.min(...times).toFixed(2);
+                const maxTime = Math.max(...times).toFixed(2);
+                
+                html += `<p><strong>Minimum time:</strong> ${minTime}s (best performance)</p>`;
+                html += `<p><strong>Maximum time:</strong> ${maxTime}s</p>`;
+                html += `<p><strong>Average time:</strong> ${avgTime}s</p>`;
+                
+                // Time interpretation
+                if (avgTime < 1.5) {
+                    html += '<p style="color: #00b894; font-weight: bold;">✓ Fast processing speed, indicator of good cognitive automation.</p>';
+                } else if (avgTime < 2.2) {
+                    html += '<p style="color: #0984e3; font-weight: bold;">→ Processing speed within average, compatible with normal cognitive functioning.</p>';
+                } else {
+                    html += '<p style="color: #e17055; font-weight: bold;">⚠ Slowed processing speed possibly indicating cognitive overload or need for automation.</p>';
+                }
+            } else {
+                html += '<p>Insufficient data for analysis.</p>';
+            }
+            
+            speedBox.innerHTML = html;
+        }
+        
+        function generateRecommendations(accuracy, avgTime, errors, diff) {
+            const recBox = document.getElementById('recommendations');
+            let html = '';
+            
+            // Performance-based recommendations
+            if (accuracy < 60) {
+                html += '<div class="recommendation-item">';
+                html += '<strong>🎯 Progressive Training</strong>';
+                html += 'Resume exercises at easy level with maximum 10 cards. Gradually increase difficulty once 80% success rate is achieved.';
+                html += '</div>';
+            }
+            
+            if (avgTime > 2.5) {
+                html += '<div class="recommendation-item">';
+                html += '<strong>⏱️ Work on Automation</strong>';
+                html += 'Practice daily for 5-10 minutes to develop response automation. Favor short, repeated sessions.';
+                html += '</div>';
+            }
+            
+            if (errors > 8) {
+                html += '<div class="recommendation-item">';
+                html += '<strong>🧠 Metacognitive Strategies</strong>';
+                html += 'Verbalize rules before each response. Use pause time between cards to strengthen awareness of strategies used.';
+                html += '</div>';
+            }
+            
+            if (accuracy >= 80 && avgTime < 1.5) {
+                html += '<div class="recommendation-item">';
+                html += '<strong>🌟 Consolidation of Skills</strong>';
+                html += 'Excellent performances! Maintain regular practice and explore more complex variants to continue stimulating executive functions.';
+                html += '</div>';
+            }
+            
+            // General recommendations
+            html += '<div class="recommendation-item">';
+            html += '<strong>📚 Transfer of Learning</strong>';
+            html += 'Apply these inhibition skills in daily situations: waiting your turn, resisting distractions, planning before acting.';
+            html += '</div>';
+            
+            recBox.innerHTML = html;
+        }
+        
+        function generateProgression(accuracy, avgTime, diff) {
+            const progBox = document.getElementById('progression');
+            let html = '';
+            
+            // Progression suggestions
+            if (diff === 'easy') {
+                if (accuracy >= 80 && avgTime < 2.0) {
+                    html += '<div class="progression-step">✅ Current level mastered → Move to MEDIUM level</div>';
+                    html += '<div class="progression-step">📈 Goal: Maintain 75% accuracy at medium level</div>';
+                } else {
+                    html += '<div class="progression-step">🔄 Consolidate EASY level (goal: 80% accuracy)</div>';
+                    html += '<div class="progression-step">💪 Complete 3-5 additional sessions at this level</div>';
+                }
+            } else if (diff === 'medium') {
+                if (accuracy >= 75 && avgTime < 1.8) {
+                    html += '<div class="progression-step">✅ Current level mastered → Move to HARD level</div>';
+                    html += '<div class="progression-step">📈 Goal: Maintain 70% accuracy at hard level</div>';
+                } else if (accuracy < 60) {
+                    html += '<div class="progression-step">⬅️ Return to EASY level recommended</div>';
+                    html += '<div class="progression-step">🎯 Consolidate basics before progressing</div>';
+                } else {
+                    html += '<div class="progression-step">🔄 Continue MEDIUM level (goal: 75% accuracy)</div>';
+                    html += '<div class="progression-step">💡 Focus on performance consistency</div>';
+                }
+            } else if (diff === 'hard') {
+                if (accuracy >= 70 && avgTime < 1.5) {
+                    html += '<div class="progression-step">🏆 Excellent mastery level!</div>';
+                    html += '<div class="progression-step">🎯 Maintain regular practice to consolidate</div>';
+                    html += '<div class="progression-step">🌟 Consider more complex variants (multiple simultaneous rules)</div>';
+                } else {
+                    html += '<div class="progression-step">💪 Continue training at HARD level</div>';
+                    html += '<div class="progression-step">📊 Goal: Progressively improve accuracy</div>';
+                }
+            }
+            
+            html += '<div class="progression-step" style="background: linear-gradient(45deg, #fdcb6e, #e17055); margin-top: 10px;">📅 Recommended frequency: 3-4 sessions per week of 10-15 minutes</div>';
+            
+            progBox.innerHTML = html;
+        }
+        
+        function calculateVariance(arr) {
+            const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+            const squareDiffs = arr.map(value => Math.pow(value - mean, 2));
+            const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / squareDiffs.length;
+            return Math.sqrt(avgSquareDiff);
+        }
+        
+        // Event listeners
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('btnMenu').addEventListener('click', backToMenu);
+        document.getElementById('btnReset').addEventListener('click', startGame);
+        document.getElementById('btnNext').addEventListener('click', nextShape);
+        
+        document.getElementById('btnStartEasy').addEventListener('click', () => selectDifficultyStart('easy'));
+        document.getElementById('btnStartMedium').addEventListener('click', () => selectDifficultyStart('medium'));
+        document.getElementById('btnStartHard').addEventListener('click', () => selectDifficultyStart('hard'));
+        
+        document.getElementById('gameEasy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('gameMedium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('gameHard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('btnCircle').addEventListener('click', () => answer('circle'));
+        document.getElementById('btnSquare').addEventListener('click', () => answer('square'));
+        document.getElementById('btnBlack').addEventListener('click', () => answer('black'));
+        document.getElementById('btnWhite').addEventListener('click', () => answer('white'));
+        
+        // Analysis screen event listeners
+        document.getElementById('btnNewTest').addEventListener('click', () => {
+            document.getElementById('analysisScreen').classList.add('hidden');
+            startGame();
+        });
+        document.getElementById('btnBackMenu').addEventListener('click', () => {
+            document.getElementById('analysisScreen').classList.add('hidden');
+            backToMenu();
+        });
+        
+        // Keyboard handling (optional on mobile)
+        document.addEventListener('keydown', function(e) {
+            if (!gameStarted) return;
+            if (document.getElementById('feedback').textContent !== '') return;
+            
+            switch(e.key.toLowerCase()) {
+                case '1':
+                case 'r':
+                    answer('circle');
+                    break;
+                case '2':
+                case 'c':
+                    answer('square');
+                    break;
+                case '3':
+                case 'n':
+                    answer('black');
+                    break;
+                case '4':
+                case 'b':
+                    answer('white');
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    nextShape();
+                    break;
+            }
+        });
+        
+        // Prevent zoom on double-tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
